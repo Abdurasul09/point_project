@@ -1,6 +1,7 @@
 // GLOBAL VARIABLES
 const canvas = document.querySelector("canvas"),
-  toolBtns = document.querySelectorAll(".tool");
+  toolBtns = document.querySelectorAll(".tool"),
+  fillColor = document.querySelector("#fill-color");
 
 // VARIABLES
 let ctx = canvas.getContext("2d"),
@@ -15,9 +16,8 @@ let ctx = canvas.getContext("2d"),
 window.addEventListener("load", () => {
   canvas.width = canvas.offsetWidth;
   canvas.height = canvas.offsetHeight;
-	console.log(canvas.height);
+  console.log(canvas.height);
 });
-
 
 // START DRAW
 const startDraw = (e) => {
@@ -27,17 +27,23 @@ const startDraw = (e) => {
   prevMouseX = e.offsetX;
   prevMouseY = e.offsetY;
   snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-	console.log(snapshot);
 };
 
 // DRAW RECTANGLE
 const drawRectangle = (e) => {
-  ctx.strokeRect(
-    e.offsetX,
-    e.offsetY,
-    prevMouseX - e.offsetX,
-    prevMouseY - e.offsetX
-  );
+  fillColor.checked
+    ? ctx.fillRect(
+        e.offsetX,
+        e.offsetY,
+        prevMouseX - e.offsetX,
+        prevMouseY - e.offsetX
+      )
+    : ctx.strokeRect(
+        e.offsetX,
+        e.offsetY,
+        prevMouseX - e.offsetX,
+        prevMouseY - e.offsetX
+      );
 };
 
 // DRAWING
