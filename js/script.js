@@ -1,32 +1,74 @@
-const canvas = document.querySelector("canvas");
+// GLOBAL VARIABLES
+const canvas = document.querySelector("canvas"),
+  toolBtns = document.querySelectorAll(".tool");
 
+// VARIABLES
 let ctx = canvas.getContext("2d"),
-    isDrawing = false,
-		brushWidth = 5
+  isDrawing = false,
+  brushWidth = 5,
+  selectedTool = "brush",
+  prevMouseX,
+  prevMouseY,
+  snapshot;
 
-
+// SET CANVAS WIDTH AND HIGHT
 window.addEventListener("load", () => {
-	canvas.width = canvas.offsetWidth
-	canvas.height = canvas.offsetHeight
-})
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+	console.log(canvas.height);
+});
 
 
-const startDraw = () => {
-	isDrawing = true
-	ctx.beginPath()
-	ctx.lineWidth = brushWidth
-}
+// START DRAW
+const startDraw = (e) => {
+  isDrawing = true;
+  ctx.beginPath();
+  ctx.lineWidth = brushWidth;
+  prevMouseX = e.offsetX;
+  prevMouseY = e.offsetY;
+  snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	console.log(snapshot);
+};
 
-const drawing = e => {
-	if(!isDrawing) return
-	ctx.lineTo(e.offsetX, e.offsetY)
-	ctx.stroke()
-}
+// DRAW RECTANGLE
+const drawRectangle = (e) => {
+  ctx.strokeRect(
+    e.offsetX,
+    e.offsetY,
+    prevMouseX - e.offsetX,
+    prevMouseY - e.offsetX
+  );
+};
 
+// DRAWING
+const drawing = (e) => {
+  if (!isDrawing) return;
+  ctx.putImageData(snapshot, 0, 0);
+  switch (selectedTool) {
+    case "brush":
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      break;
+    case "rectangle":
+      drawRectangle(e);
+  }
+};
+
+// STOP DRAW
 const stopDraw = () => {
-	isDrawing = false
-}
+  isDrawing = false;
+};
 
-canvas.addEventListener("mousedown", startDraw)
-canvas.addEventListener("mousemove", drawing)
-canvas.addEventListener("mouseup", stopDraw)
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mousemove", drawing);
+canvas.addEventListener("mouseup", stopDraw);
+
+// TOOLS BTN AND SET TO VARIABLES SELECTED TO
+toolBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelector(".options .active").classList.remove("active");
+    btn.classList.add("active");
+    selectedTool = btn.id;
+    console.log(btn.id);
+  });
+});
